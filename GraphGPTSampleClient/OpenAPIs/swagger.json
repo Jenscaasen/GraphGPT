@@ -1,0 +1,170 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "OpenAPI Document on Azure Functions",
+    "version": "1.0.0"
+  },
+  "host": "localhost:7207",
+  "basePath": "/api",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/execute": {
+      "get": {
+        "tags": [
+          "execute"
+        ],
+        "operationId": "execute",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "text/plain"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "The Parameters needed to run the graph calls",
+            "schema": {
+              "$ref": "#/definitions/executeInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The output of the graph calls",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/executeOutput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/prepare": {
+      "get": {
+        "tags": [
+          "Prepare"
+        ],
+        "operationId": "prepare",
+        "produces": [
+          "text/plain"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "prompt",
+            "description": "The prompt made by the user",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The Output for processing by the user",
+            "schema": {
+              "$ref": "#/definitions/prepareOutput"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "executeInput": {
+      "type": "object",
+      "properties": {
+        "prompt": {
+          "type": "string"
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/graphParameter"
+          }
+        },
+        "graphCalls": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/graphCallTemplate"
+          }
+        }
+      }
+    },
+    "executeOutput": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean"
+        },
+        "result": {
+          "type": "string"
+        }
+      }
+    },
+    "graphCallTemplate": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "permissionText": {
+          "type": "string"
+        }
+      }
+    },
+    "graphParameter": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "example": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "fullfill": {
+          "type": "string"
+        }
+      }
+    },
+    "prepareOutput": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "graphCalls": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/graphCallTemplate"
+          }
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/graphParameter"
+          }
+        }
+      }
+    }
+  }
+}

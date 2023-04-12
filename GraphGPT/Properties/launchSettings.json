@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "GraphGPT": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7207",
+      "environmentVariables": {
+        "OPEN_AI_API_KEY": "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"
+      }
+    }
+  }
+}
