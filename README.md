@@ -31,3 +31,6 @@ To run GraphGPT, you need a Microsoft Azure Account and knowledge in deploying a
 # Known Issues
 -GPT-4 sometimes does not handle JSON correctly or does not understand his own choice of parameters, and gives up. To circumvent this, try again  
 -In some complex scenarios, especially with filters, the documentation on how Graph works is different from how it actually works, and GPT-4 only knows what was written in the official documentation (which is wrong sometimes regarding Microsoft Graph)
+
+# Contributions
+Pullrequests welcome. Since Graph is a vast area, more complex and different graph tasks need to be tested, and the code needs to be made self-loop ready
