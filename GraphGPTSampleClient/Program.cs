@@ -41,7 +41,7 @@
                 string value = parameter.Value;
                 if (!string.IsNullOrEmpty(value))
                 {
-                    Console.WriteLine($"Enter value (Default '{value}'): ");
+                    Console.WriteLine($"Enter value (Autoselected is '{value}'): ");
 
                     string input = Console.ReadLine();
                     if (!string.IsNullOrEmpty(input))
@@ -50,7 +50,7 @@
                     }
                     else
                     {
-                        Console.WriteLine($"Using default value '{value}'");
+                        Console.WriteLine($"Using autoselect value '{value}'");
                     }
                 }
                 else
@@ -65,7 +65,7 @@
             Console.WriteLine($"using the following parameters to execute the Graph calls:");
             foreach (var parameter in executeInput.Parameters)
             {
-                Console.WriteLine($"Parameter '{parameter.Name}': {parameter.Value}");
+                Console.WriteLine($"'{parameter.Name}': {parameter.Value}");
             }
 
           var executeResult = await client.ExecuteAsync(executeInput);
