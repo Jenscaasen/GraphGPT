@@ -15,7 +15,9 @@ Step 2 is the execution, this is where the parameters are placed into the placeh
 -Endpoints are OpenAPI enabled to make integration easier  
 
 # Demo
-(will update once i find out how to put GIFs)
+
+https://user-images.githubusercontent.com/8245848/231466057-e975505c-bc6d-46e1-8870-2e983cc1241f.mp4
+
 
 # Autorization of Graph Calls
 There a 2 ways of autorizing the calls towards Graph API: using a self supplied token, or automatically via DefaultAzureCredentials
