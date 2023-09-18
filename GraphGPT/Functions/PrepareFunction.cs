@@ -50,10 +50,10 @@ namespace GraphGPT.Functions
 
         private async Task<PrepareOutput> GetOutputFromPrompt(string prompt)
         {
-            string OpenAIAPIKey = Environment.GetEnvironmentVariable("OPEN_AI_API_KEY");
+            string OpenAIAPIKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
             if (string.IsNullOrEmpty(OpenAIAPIKey))
             {
-                throw new Exception("Please add 'OPEN_AI_API_KEY' to your enviroment variables");
+                throw new Exception("Please add 'OPENAI_API_KEY' to your enviroment variables");
             }
             OpenAIAPI api = new OpenAIAPI(OpenAIAPIKey);
 
@@ -61,33 +61,46 @@ namespace GraphGPT.Functions
 
             PrepareOutput exampleOutput = new PrepareOutput
             {
-                Description = "Describe which parameters are needed to successfully perform the Graph Calls, and what the final graph Calls will look like as an example",
+                Description = "Describe which parameters are needed to successfully perform the Graph Call, and what the final graph Call will look like as an example",
+                EffectText = "Describe what will be the consequence of sending this Graph Call. What will happen?",
+                StepByStep = "Think about it Step By Step: what is required, and what needs to happen?",
                 Parameters = new System.Collections.Generic.List<GraphParameter> {
                 new GraphParameter {
-                    Name="The name of a parameter, e.g. '$userID'",
+                    Name="The name of a parameter, e.g. Username",
                     Description = "The description, e.g. 'The username is needed as part of the HTTP GET to identify the account'",
                     Example = "jens.caasen@example.org",
-                    Value = "jens.caasen@example.org"
+                    Value = "jens.caasen@example.org",
+                    VariableName = "$userID"
+                },
+                 new GraphParameter {
+                    Name="AccountEnabled",
+                    Description = "Sets if the Account will be enabled or not",
+                    Example = "true or false",
+                    Value = "true",
+                    VariableName  = "$accountEnabled"
                 }
             },
-                GraphCalls = new System.Collections.Generic.List<GraphCallTemplate>
-                {
+                GraphCall =
                     new GraphCallTemplate
                     {
-                        Method ="PATCH",
+                        Method = "PATCH",
                         Url = "https://graph.microsoft.com/v1.0/users/$userID",
-                        Body = @"{""accountEnabled"": true}",
+                        Body = @"{""accountEnabled"": '$accountEnabled'}",
                         PermissionText = "User.ReadWrite.All"
                     }
-                }
             };
             _logger.LogInformation("Example output generated.");
 
             string exampleOutputText = System.Text.Json.JsonSerializer.Serialize(exampleOutput);
             chat.AppendSystemMessage("You are a JSON AI. You only answer with JSON, no explanations, acknowledgements or any other text.");
-            string jsonCompletePromt = $"From this prompt, I want to know what parameters are needed to successfully perform the Graph Calls, " +
-                $"and which excact graph calls are performed in which order to archive the goal. " +
-                $"Here is an example of what I expect to get back from you: {exampleOutputText}.";
+            string jsonCompletePromt = $"From this prompt, I want to know what parameters are needed to successfully perform the delegated Graph Call." +
+                $"Use the Beta endpoint if possible." +
+                $"Use all variables available in a graph call. When it makes sense that a user chooses a specific text or information, offer that " +
+                $"as a variable as parameter. Do not fill out content that the user also could fill. Find a way to only do one graph call, not multiple." +
+                $"Here is an example of what I expect to get back from you: {exampleOutputText}." +
+                $"the current date and time is " + DateTime.Now.ToString();
+            jsonCompletePromt += "Remember to use delegated permissions, not application permissions. This means to send an email for example, use 'https://graph.microsoft.com/v1.0/me/sendMail', not 'https://graph.microsoft.com/v1.0/users/{user-id}/sendMail'";
+
             jsonCompletePromt += "prompt: " + prompt;
             chat.AppendUserInput(jsonCompletePromt);
             chat.Model = "gpt-4";
@@ -96,7 +109,8 @@ namespace GraphGPT.Functions
 
             string modelResponse = await chat.GetResponseFromChatbotAsync();
 
-            PrepareOutput modelOutput = System.Text.Json.JsonSerializer.Deserialize<PrepareOutput>(modelResponse);
+            PrepareOutput modelOutput = System.Text.Json.JsonSerializer.Deserialize<PrepareOutput>(modelResponse,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true, WriteIndented = true });
 
             _logger.LogInformation("AI model response received.");
 

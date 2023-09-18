@@ -65,6 +65,19 @@ namespace GraphGPT.Functions
             }
         }
 
+        private static HttpMethod GetMethodByName(string method)
+        {
+            return method.ToLower() switch
+            {
+                "get" => HttpMethod.Get,
+                "post" => HttpMethod.Post,
+                "patch" => HttpMethod.Patch,
+                "put" => HttpMethod.Put,
+                "delete" => HttpMethod.Delete,
+                _ => throw new Exception("Unknown Method: " + method),
+            };
+        }
+
         private async Task<List<ExecuteOutput>> ExecuteGraphCallsAsync(List<GraphCallTemplate> templates, ExecuteInput executeInput)
         {
             using var httpClient = new HttpClient();
@@ -120,26 +133,13 @@ namespace GraphGPT.Functions
             return graphCallOutputs;
         }
 
-        private static HttpMethod GetMethodByName(string method)
-        {
-            return method.ToLower() switch
-            {
-                "get" => HttpMethod.Get,
-                "post" => HttpMethod.Post,
-                "patch" => HttpMethod.Patch,
-                "put" => HttpMethod.Put,
-                "delete" => HttpMethod.Delete,
-                _ => throw new Exception("Unknown Method: " + method),
-            };
-        }
-
         private async Task<List<GraphCallTemplate>> FinishGraphCallTemplatesAsync(ExecuteInput executeInput)
         {
             // Get OpenAI API Key
-            var openAIApiKey = Environment.GetEnvironmentVariable("OPEN_AI_API_KEY");
+            var openAIApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
             if (string.IsNullOrEmpty(openAIApiKey))
             {
-                throw new Exception("Please add 'OPEN_AI_API_KEY' to your environment variables");
+                throw new Exception("Please add 'OPENAI_API_KEY' to your environment variables");
             }
 
             var api = new OpenAIAPI(openAIApiKey);
@@ -159,4 +159,3 @@ namespace GraphGPT.Functions
         }
     }
 }
-

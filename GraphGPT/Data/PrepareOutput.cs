@@ -12,14 +12,22 @@ namespace GraphGPT.Data
         /// Top Level description made by the model
         /// </summary>
         public string Description { get; set; }
+
+        /// <summary>
+        /// Description of the effect of sending the Graph Call
+        /// </summary>
+        public string EffectText { get; set; }
+
         /// <summary>
         /// List of actual Graph Calls to be performed
         /// </summary>
-        public List<GraphCallTemplate> GraphCalls { get; set; }
+        public GraphCallTemplate GraphCall { get; set; }
+
         /// <summary>
         /// Parameters to prompt the "human in the loop" for
         /// </summary>
         public List<GraphParameter> Parameters { get; set; }
-        
+
+        public string StepByStep { get; set; }
     }
 }
